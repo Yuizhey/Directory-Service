@@ -1,5 +1,4 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
+﻿Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{835DD586-96EF-42B8-A25A-A17DC345719A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DirectoryService.Domain", "DirectoryService.Domain\DirectoryService.Domain.csproj", "{7B3CF160-839A-450A-B938-EAB0EE168335}"

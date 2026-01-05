@@ -9,6 +9,7 @@ public class Department
 
     private Department(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive)
     {
+        Id = Guid.NewGuid();
         Name = name;
         Identifier = identifier;
         Path = path;

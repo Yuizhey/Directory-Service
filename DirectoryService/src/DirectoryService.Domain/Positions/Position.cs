@@ -7,6 +7,7 @@ public class Position
 {
     private Position(PositionName name, PositionDescription description, bool isActive)
     {
+        Id = Guid.NewGuid();
         Name = name;
         Description = description;
         IsActive = isActive;

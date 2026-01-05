@@ -1,10 +1,13 @@
 using System;
 using CSharpFunctionalExtensions;
+using DirectoryService.Domain.Departments;
 
 namespace DirectoryService.Domain.Positions;
 
 public class Position
 {
+    private List<DepartmentPosition> _departments = [];
+
     private Position(PositionName name, PositionDescription description, bool isActive)
     {
         Id = Guid.NewGuid();
@@ -25,6 +28,8 @@ public class Position
     public DateTime CreatedAt { get; private set; }
 
     public DateTime? UpdatedAt { get; private set; }
+
+    public IReadOnlyList<DepartmentPosition> Departments => _departments.AsReadOnly();
 
     public static Result<Position> Create(string name, string description, bool isActive)
     {

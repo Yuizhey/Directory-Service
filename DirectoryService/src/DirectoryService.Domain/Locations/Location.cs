@@ -1,10 +1,13 @@
 using System;
 using CSharpFunctionalExtensions;
+using DirectoryService.Domain.Departments;
 
 namespace DirectoryService.Domain.Locations;
 
 public class Location
 {
+    private List<DepartmentLocation> _departments = [];
+
     private Location(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive)
     {
         Id = Guid.NewGuid();
@@ -28,6 +31,8 @@ public class Location
     public DateTime CreatedAt { get; private set; }
 
     public DateTime? UpdatedAt { get; private set; }
+
+    public IReadOnlyList<DepartmentLocation> Departments => _departments.AsReadOnly();
 
     public static Result<Location> Create(string name, string country, string city, string street, int houseNumber, string timeZone, bool isActive)
     {

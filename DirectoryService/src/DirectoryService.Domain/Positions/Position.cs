@@ -25,7 +25,7 @@ public class Position
     public DateTime CreatedAt { get; private set; }
 
     public DateTime? UpdatedAt { get; private set; }
-    
+
     public static Result<Position> Create(string name, string description, bool isActive)
     {
         var nameResult = PositionName.Create(name);
@@ -41,5 +41,10 @@ public class Position
         }
 
         return Result.Success(new Position(nameResult.Value, descriptionResult.Value, isActive));
+    }
+    
+    public static Result<Position> Create(PositionName name, PositionDescription description, bool isActive)
+    {
+        return Result.Success(new Position(name, description, isActive));
     }
 }

@@ -20,7 +20,7 @@ public class Location
     public LocationName Name { get; private set; }
 
     public LocationAddress Address { get; private set; }
-    
+
     public LocationTimeZone TimeZone { get; private set; }
 
     public bool IsActive { get; private set; }
@@ -50,5 +50,10 @@ public class Location
         }
 
         return Result.Success(new Location(nameResult.Value, addressResult.Value, timeZoneResult.Value, isActive));
+    }
+    
+    public static Result<Location> Create(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive)
+    {
+        return Result.Success(new Location(name, address, timeZone, isActive));
     }
 }

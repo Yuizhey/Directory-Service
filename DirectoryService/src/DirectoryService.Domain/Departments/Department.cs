@@ -42,23 +42,28 @@ public class Department
     public static Result<Department> Create(string name, string identifier, string path, short depth, bool isActive, Department? parent = null)
     {
         var nameResult = DepartmentName.Create(name);
-        if(nameResult.IsFailure)
+        if (nameResult.IsFailure)
         {
             return Result.Failure<Department>(nameResult.Error);
         }
 
         var identifierResult = DepartmentIdentifier.Create(identifier);
-        if(identifierResult.IsFailure)
+        if (identifierResult.IsFailure)
         {
             return Result.Failure<Department>(identifierResult.Error);
         }
 
         var pathResult = DepartmentPath.Create(path, parent);
-        if(pathResult.IsFailure)
+        if (pathResult.IsFailure)
         {
             return Result.Failure<Department>(pathResult.Error);
         }
 
         return new Department(nameResult.Value, identifierResult.Value, pathResult.Value, depth, isActive);
+    }
+    
+    public static Result<Department> Create(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive)
+    { 
+        return Result.Success(new Department(name, identifier, path, depth, isActive));
     }
 }

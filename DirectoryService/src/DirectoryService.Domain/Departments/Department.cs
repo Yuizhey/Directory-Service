@@ -51,7 +51,7 @@ public class Department
             return Result.Failure<Department>(identifierResult.Error);
         }
 
-        var pathResult = DepartmentPath.Create(path, depth == 0 ? string.Empty : path);
+        var pathResult = DepartmentPath.Create(path, depth == 1 ? string.Empty : path);
         if(pathResult.IsFailure)
         {
             return Result.Failure<Department>(pathResult.Error);

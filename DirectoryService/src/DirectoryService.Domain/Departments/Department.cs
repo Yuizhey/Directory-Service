@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using CSharpFunctionalExtensions;
 
 namespace DirectoryService.Domain.Departments;
@@ -38,7 +39,7 @@ public class Department
 
     public IReadOnlyList<Department> Children => _children.AsReadOnly();
 
-    public static Result<Department> Create(string name, string identifier, string path, short depth, bool isActive)
+    public static Result<Department> Create(string name, string identifier, string path, short depth, bool isActive, Department? parent = null)
     {
         var nameResult = DepartmentName.Create(name);
         if(nameResult.IsFailure)
@@ -52,7 +53,7 @@ public class Department
             return Result.Failure<Department>(identifierResult.Error);
         }
 
-        var pathResult = DepartmentPath.Create(path, depth == 1 ? string.Empty : path);
+        var pathResult = DepartmentPath.Create(path, parent);
         if(pathResult.IsFailure)
         {
             return Result.Failure<Department>(pathResult.Error);

@@ -6,6 +6,7 @@ public record class DepartmentPath
 {
     private const int MAX_LENGTH = 50;
     private const int MIN_LENGTH = 2;
+    private const string Separator = ".";
     
     private DepartmentPath(string value)
     {
@@ -14,7 +15,7 @@ public record class DepartmentPath
 
     public string Value { get; }
 
-    public static Result<DepartmentPath> Create(string path, string parentPath)
+    public static Result<DepartmentPath> Create(string path, Department? parent = null)
     {
         if (string.IsNullOrWhiteSpace(path))
         {
@@ -31,6 +32,11 @@ public record class DepartmentPath
             return Result.Failure<DepartmentPath>($"Department path must be at least {MIN_LENGTH} characters.");
         }
 
-        return Result.Success(new DepartmentPath($"{parentPath}.{path}"));
+        if (parent is null)
+        {
+            return Result.Success(new DepartmentPath(path));
+        }
+
+        return Result.Success(new DepartmentPath($"{parent.Path.Value}{Separator}{path}"));
     }
 }

@@ -34,7 +34,14 @@ public class Location
 
     public IReadOnlyList<DepartmentLocation> Departments => _departments.AsReadOnly();
 
-    public static Result<Location> Create(string name, string country, string city, string street, int houseNumber, string timeZone, bool isActive)
+    public static Result<Location> Create(
+        string name,
+        string country,
+        string city,
+        string street,
+        int houseNumber,
+        string timeZone,
+        bool isActive)
     {
         var nameResult = LocationName.Create(name);
         if (nameResult.IsFailure)

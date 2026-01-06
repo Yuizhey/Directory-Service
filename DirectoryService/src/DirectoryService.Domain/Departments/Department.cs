@@ -10,7 +10,13 @@ public class Department
     private List<DepartmentLocation> _locations = [];
     private List<DepartmentPosition> _positions = [];
 
-    private Department(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive, IEnumerable<Guid>? locationIds = null, IEnumerable<Guid>? positionIds = null)
+    private Department(
+        DepartmentName name,
+        DepartmentIdentifier identifier,
+        DepartmentPath path,
+        short depth,
+        bool isActive,
+        IEnumerable<Guid> locationIds)
     {
         Id = Guid.NewGuid();
         Name = name;
@@ -19,8 +25,7 @@ public class Department
         Depth = depth;
         IsActive = isActive;
         CreatedAt = DateTime.UtcNow;
-        _locations = locationIds?.Select(locationId => new DepartmentLocation(this.Id, locationId)).ToList() ?? [];
-        _positions = positionIds?.Select(positionId => new DepartmentPosition(this.Id, positionId)).ToList() ?? [];
+        _locations = locationIds.Select(locationId => new DepartmentLocation(this.Id, locationId)).ToList();
     }
 
     public Guid Id { get; private set; }
@@ -47,7 +52,14 @@ public class Department
 
     public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
 
-    public static Result<Department> Create(string name, string identifier, string path, short depth, bool isActive, Department? parent = null, IEnumerable<Guid>? locationIds = null, IEnumerable<Guid>? positionIds = null)
+    public static Result<Department> Create(
+        string name,
+        string identifier,
+        string path,
+        short depth,
+        bool isActive,
+        IEnumerable<Guid> locationIds,
+        Department? parent = null)
     {
         var nameResult = DepartmentName.Create(name);
         if (nameResult.IsFailure)
@@ -67,11 +79,11 @@ public class Department
             return Result.Failure<Department>(pathResult.Error);
         }
 
-        return new Department(nameResult.Value, identifierResult.Value, pathResult.Value, depth, isActive, locationIds, positionIds);
+        return new Department(nameResult.Value, identifierResult.Value, pathResult.Value, depth, isActive, locationIds);
     }
     
-    public static Result<Department> Create(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive, IEnumerable<Guid>? locationIds = null, IEnumerable<Guid>? positionIds = null)
+    public static Result<Department> Create(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive, IEnumerable<Guid> locationIds)
     { 
-        return Result.Success(new Department(name, identifier, path, depth, isActive, locationIds, positionIds));
+        return Result.Success(new Department(name, identifier, path, depth, isActive, locationIds));
     }
 }

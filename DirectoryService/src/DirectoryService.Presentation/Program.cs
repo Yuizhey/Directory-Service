@@ -1,3 +1,5 @@
+using DirectoryService.Infrastructure;
+
 namespace DirectoryService.Presentation;
 
 public class Program
@@ -8,6 +10,8 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddScoped<DirectoryServiceDbContext>(_ =>
+            new DirectoryServiceDbContext(builder.Configuration.GetConnectionString("DirectoryServiceDB")!));
 
         var app = builder.Build();
 

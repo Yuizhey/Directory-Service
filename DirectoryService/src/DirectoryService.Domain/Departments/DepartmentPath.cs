@@ -4,8 +4,6 @@ namespace DirectoryService.Domain.Departments;
 
 public record class DepartmentPath
 {
-    private const int MAX_LENGTH = 50;
-    private const int MIN_LENGTH = 2;
     private const string Separator = ".";
     
     private DepartmentPath(string value)
@@ -22,14 +20,14 @@ public record class DepartmentPath
             return Result.Failure<DepartmentPath>("Department path cannot be empty.");
         }
 
-        if (path.Length > MAX_LENGTH)
+        if (path.Length > LengthConstants.MAX_LENGTH_50)
         {
-            return Result.Failure<DepartmentPath>($"Department path cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<DepartmentPath>($"Department path cannot exceed {LengthConstants.MAX_LENGTH_50} characters.");
         }
 
-        if (path.Length < MIN_LENGTH)
+        if (path.Length < LengthConstants.MIN_LENGTH_2)
         {
-            return Result.Failure<DepartmentPath>($"Department path must be at least {MIN_LENGTH} characters.");
+            return Result.Failure<DepartmentPath>($"Department path must be at least {LengthConstants.MIN_LENGTH_2} characters.");
         }
 
         if (parent is null)

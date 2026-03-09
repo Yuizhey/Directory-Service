@@ -5,8 +5,6 @@ namespace DirectoryService.Domain.Departments;
 
 public sealed record class DepartmentName
 {
-    private const int MAX_LENGTH = 150;
-    private const int MIN_LENGTH = 3;
     private DepartmentName(string value)
     {
         Value = value;
@@ -21,14 +19,14 @@ public sealed record class DepartmentName
             return Result.Failure<DepartmentName>("Department name cannot be empty.");
         }
 
-        if (name.Length > MAX_LENGTH)
+        if (name.Length > LengthConstants.MAX_LENGTH_150)
         {
-            return Result.Failure<DepartmentName>($"Department name cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<DepartmentName>($"Department name cannot exceed {LengthConstants.MAX_LENGTH_150} characters.");
         }
 
-        if (name.Length < MIN_LENGTH)
+        if (name.Length < LengthConstants.MIN_LENGTH_3)
         {
-            return Result.Failure<DepartmentName>($"Department name must be at least {MIN_LENGTH} characters.");
+            return Result.Failure<DepartmentName>($"Department name must be at least {LengthConstants.MIN_LENGTH_3} characters.");
         }
 
         return Result.Success(new DepartmentName(name));

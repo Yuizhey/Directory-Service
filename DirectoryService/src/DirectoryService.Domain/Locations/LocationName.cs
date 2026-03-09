@@ -4,9 +4,6 @@ namespace DirectoryService.Domain.Locations;
 
 public record class LocationName
 {
-    private const int MAX_LENGTH = 120;
-    private const int MIN_LENGTH = 3;
-
     private LocationName(string value)
     {
         Value = value;
@@ -21,14 +18,14 @@ public record class LocationName
             return Result.Failure<LocationName>("Location name cannot be empty.");
         }
 
-        if (name.Length > MAX_LENGTH)
+        if (name.Length > LengthConstants.MAX_LENGTH_120)
         {
-            return Result.Failure<LocationName>($"Location name cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<LocationName>($"Location name cannot exceed {LengthConstants.MAX_LENGTH_120} characters.");
         }
 
-        if (name.Length < MIN_LENGTH)
+        if (name.Length < LengthConstants.MIN_LENGTH_3)
         {
-            return Result.Failure<LocationName>($"Location name must be at least {MIN_LENGTH} characters.");
+            return Result.Failure<LocationName>($"Location name must be at least {LengthConstants.MIN_LENGTH_3} characters.");
         }
 
         return Result.Success(new LocationName(name));

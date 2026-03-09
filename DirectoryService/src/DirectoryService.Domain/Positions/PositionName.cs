@@ -4,8 +4,6 @@ namespace DirectoryService.Domain.Positions;
 
 public record class PositionName
 {
-    private const int MAX_LENGTH = 100;
-    private const int MIN_LENGTH = 3;
     private PositionName(string value)
     {
         Value = value;
@@ -20,14 +18,14 @@ public record class PositionName
             return Result.Failure<PositionName>("Position name cannot be empty.");
         }
 
-        if (name.Length > MAX_LENGTH)
+        if (name.Length > LengthConstants.MAX_LENGTH_100)
         {
-            return Result.Failure<PositionName>($"Position name cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<PositionName>($"Position name cannot exceed {LengthConstants.MAX_LENGTH_100} characters.");
         }
 
-        if (name.Length < MIN_LENGTH)
+        if (name.Length < LengthConstants.MIN_LENGTH_3)
         {
-            return Result.Failure<PositionName>($"Position name must be at least {MIN_LENGTH} characters.");
+            return Result.Failure<PositionName>($"Position name must be at least {LengthConstants.MIN_LENGTH_3} characters.");
         }
 
         return Result.Success(new PositionName(name));

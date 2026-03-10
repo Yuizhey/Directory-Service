@@ -8,6 +8,11 @@ public class Position
 {
     private List<DepartmentPosition> _departments = [];
 
+    /// <summary>
+    /// Private constructor for EF Core. Do not use it directly to create Position instances.
+    /// </summary>
+    private Position() { }
+    
     private Position(PositionName name, PositionDescription description, bool isActive)
     {
         Id = Guid.NewGuid();

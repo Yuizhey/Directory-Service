@@ -4,9 +4,8 @@ namespace DirectoryService.Domain.Locations;
 
 public record class LocationAddress
 {
-    private const int MAX_LENGTH = 50;
 
-    public LocationAddress(string country, string city, string street, int houseNumber)
+    private LocationAddress(string country, string city, string street, int houseNumber)
     {
         Country = country;
         City = city;
@@ -26,17 +25,17 @@ public record class LocationAddress
     {
         if (!IsValidStringPart(country))
         {
-            return Result.Failure<LocationAddress>($"Country cannot be empty or exceed {MAX_LENGTH} characters.");
+            return Result.Failure<LocationAddress>($"Country cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters.");
         }
 
         if (!IsValidStringPart(city))
         {
-            return Result.Failure<LocationAddress>($"City cannot be empty or exceed {MAX_LENGTH} characters.");
+            return Result.Failure<LocationAddress>($"City cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters.");
         }
 
         if (!IsValidStringPart(street))
         {
-            return Result.Failure<LocationAddress>($"Street cannot be empty or exceed {MAX_LENGTH} characters.");
+            return Result.Failure<LocationAddress>($"Street cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters.");
         }
 
         if (houseNumber <= 0)
@@ -49,6 +48,6 @@ public record class LocationAddress
 
     private static bool IsValidStringPart(string part)
     {
-        return !string.IsNullOrWhiteSpace(part) && part.Length <= MAX_LENGTH;
+        return !string.IsNullOrWhiteSpace(part) && part.Length <= LengthConstants.MAX_LENGTH_50;
     }
 }

@@ -8,6 +8,11 @@ public class Location
 {
     private List<DepartmentLocation> _departments = [];
 
+    /// <summary>
+    /// Private constructor for EF Core. Do not use it directly to create Location instances.
+    /// </summary>
+    private Location() { }
+
     private Location(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive)
     {
         Id = Guid.NewGuid();

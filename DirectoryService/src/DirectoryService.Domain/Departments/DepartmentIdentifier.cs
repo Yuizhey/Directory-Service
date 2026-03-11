@@ -5,10 +5,6 @@ namespace DirectoryService.Domain.Departments;
 
 public record class DepartmentIdentifier
 {
-    private const int MAX_LENGTH = 150;
-    private const int MIN_LENGTH = 3;
-    private const string LATIN_REGEX = @"^[a-zA-Z]+$";
-
     private DepartmentIdentifier(string value)
     {
         Value = value;
@@ -23,19 +19,19 @@ public record class DepartmentIdentifier
             return Result.Failure<DepartmentIdentifier>("Department identifier cannot be empty.");
         }
 
-        if(!Regex.IsMatch(identifier, LATIN_REGEX))
+        if(!Regex.IsMatch(identifier, RegexConstants.LATIN_REGEX))
         {
             return Result.Failure<DepartmentIdentifier>("Department identifier must contain only Latin letters (a-z, A-Z).");
         }
 
-        if (identifier.Length > MAX_LENGTH)
+        if (identifier.Length > LengthConstants.MAX_LENGTH_150)
         {
-            return Result.Failure<DepartmentIdentifier>($"Department identifier cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<DepartmentIdentifier>($"Department identifier cannot exceed {LengthConstants.MAX_LENGTH_150} characters.");
         }
 
-        if (identifier.Length < MIN_LENGTH)
+        if (identifier.Length < LengthConstants.MIN_LENGTH_3)
         {
-            return Result.Failure<DepartmentIdentifier>($"Department identifier must be at least {MIN_LENGTH} characters.");
+            return Result.Failure<DepartmentIdentifier>($"Department identifier must be at least {LengthConstants.MIN_LENGTH_3} characters.");
         }
 
         return Result.Success(new DepartmentIdentifier(identifier));

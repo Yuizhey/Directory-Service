@@ -5,9 +5,6 @@ namespace DirectoryService.Domain.Locations;
 
 public record class LocationTimeZone
 {
-    private const int MAX_LENGTH = 120;
-    private const int MIN_LENGTH = 5;
-    public const string IanaTimeZoneRegex = @"^[A-Za-z]+\/[A-Za-z_]+$";
     private LocationTimeZone(string value)
     {
         Value = value;
@@ -22,19 +19,19 @@ public record class LocationTimeZone
             return Result.Failure<LocationTimeZone>("Position name cannot be empty.");
         }
 
-        if (!Regex.IsMatch(timeZone, IanaTimeZoneRegex))
+        if (!Regex.IsMatch(timeZone, RegexConstants.IanaTimeZoneRegex))
         {
             return Result.Failure<LocationTimeZone>("Position time zone must be in valid IANA format (e.g., 'America/New_York').");
         }
 
-        if (timeZone.Length > MAX_LENGTH)
+        if (timeZone.Length > LengthConstants.MAX_LENGTH_120)
         {
-            return Result.Failure<LocationTimeZone>($"Position name cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<LocationTimeZone>($"Position name cannot exceed {LengthConstants.MAX_LENGTH_120} characters.");
         }
 
-        if (timeZone.Length < MIN_LENGTH)
+        if (timeZone.Length < LengthConstants.MIN_LENGTH_5)
         {
-            return Result.Failure<LocationTimeZone>($"Position name must be at least {MIN_LENGTH} characters.");
+            return Result.Failure<LocationTimeZone>($"Position name must be at least {LengthConstants.MIN_LENGTH_5} characters.");
         }
 
         return Result.Success(new LocationTimeZone(timeZone));

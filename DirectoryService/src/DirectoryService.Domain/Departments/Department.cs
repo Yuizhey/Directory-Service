@@ -10,6 +10,11 @@ public class Department
     private List<DepartmentLocation> _locations = [];
     private List<DepartmentPosition> _positions = [];
 
+    /// <summary>
+    /// Private constructor for EF Core. Do not use it directly to create Department instances.
+    /// </summary>
+    private Department() { }
+
     private Department(
         DepartmentName name,
         DepartmentIdentifier identifier,

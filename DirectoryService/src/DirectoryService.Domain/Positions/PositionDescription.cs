@@ -4,8 +4,6 @@ namespace DirectoryService.Domain.Positions;
 
 public record class PositionDescription
 {
-    private const int MAX_LENGTH = 1000;
-
     private PositionDescription(string value)
     {
         Value = value;
@@ -20,9 +18,9 @@ public record class PositionDescription
             return Result.Failure<PositionDescription>("Position description cannot be empty.");
         }
 
-        if (description.Length > MAX_LENGTH)
+        if (description.Length > LengthConstants.MAX_LENGTH_1000)
         {
-            return Result.Failure<PositionDescription>($"Position description cannot exceed {MAX_LENGTH} characters.");
+            return Result.Failure<PositionDescription>($"Position description cannot exceed {LengthConstants.MAX_LENGTH_1000} characters.");
         }
 
         return Result.Success(new PositionDescription(description));

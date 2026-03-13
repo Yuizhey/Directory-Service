@@ -69,7 +69,7 @@ public class Location
         return Result.Success(new Location(nameResult.Value, addressResult.Value, timeZoneResult.Value, isActive));
     }
     
-    public static Result<Location> Create(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive)
+    public static Result<Location> Create(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive = true)
     {
         return Result.Success(new Location(name, address, timeZone, isActive));
     }

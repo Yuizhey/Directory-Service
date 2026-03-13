@@ -1,3 +1,4 @@
+using DirectoryService.Application;
 using DirectoryService.Infrastructure;
 
 namespace DirectoryService.Presentation;
@@ -10,8 +11,12 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
+        builder.Services.AddControllers();
         builder.Services.AddScoped<DirectoryServiceDbContext>(_ =>
             new DirectoryServiceDbContext(builder.Configuration.GetConnectionString("DirectoryServiceDB")!));
+
+        builder.Services.AddApplicationLayer();
+        builder.Services.AddInfrastructureLayer();
 
         var app = builder.Build();
 
@@ -21,6 +26,7 @@ public class Program
             app.UseSwaggerUI();
         }
 
+        app.MapControllers();
         app.UseHttpsRedirection();
         app.Run();
     }

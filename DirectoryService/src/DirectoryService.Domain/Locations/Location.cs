@@ -1,6 +1,7 @@
 using System;
 using CSharpFunctionalExtensions;
 using DirectoryService.Domain.Departments;
+using Shared.Errors;
 
 namespace DirectoryService.Domain.Locations;
 
@@ -38,39 +39,9 @@ public class Location
     public DateTime? UpdatedAt { get; private set; }
 
     public IReadOnlyList<DepartmentLocation> Departments => _departments.AsReadOnly();
-
-    public static Result<Location> Create(
-        string name,
-        string country,
-        string city,
-        string street,
-        int houseNumber,
-        string timeZone,
-        bool isActive)
-    {
-        var nameResult = LocationName.Create(name);
-        if (nameResult.IsFailure)
-        {
-            return Result.Failure<Location>(nameResult.Error);
-        }
-
-        var addressResult = LocationAddress.Create(country, city, street, houseNumber);
-        if (addressResult.IsFailure)
-        {
-            return Result.Failure<Location>(addressResult.Error);
-        }
-
-        var timeZoneResult = LocationTimeZone.Create(timeZone);
-        if (timeZoneResult.IsFailure)
-        {
-            return Result.Failure<Location>(timeZoneResult.Error);
-        }
-
-        return Result.Success(new Location(nameResult.Value, addressResult.Value, timeZoneResult.Value, isActive));
-    }
     
-    public static Result<Location> Create(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive = true)
+    public static Result<Location, Failure> Create(LocationName name, LocationAddress address, LocationTimeZone timeZone, bool isActive = true)
     {
-        return Result.Success(new Location(name, address, timeZone, isActive));
+        return Result.Success<Location, Failure>(new Location(name, address, timeZone, isActive));
     }
 }

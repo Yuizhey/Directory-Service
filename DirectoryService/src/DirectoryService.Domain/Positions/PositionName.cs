@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Shared.Errors;
 
 namespace DirectoryService.Domain.Positions;
 
@@ -11,23 +12,29 @@ public record class PositionName
 
     public string Value { get; }
 
-    public static Result<PositionName> Create(string name)
+    public static Result<PositionName, Failure> Create(string name)
     {
+        var errors = new List<Error>();
         if (string.IsNullOrWhiteSpace(name))
         {
-            return Result.Failure<PositionName>("Position name cannot be empty.");
+            errors.Add(Error.BadRequest("Position name cannot be empty."));
         }
 
         if (name.Length > LengthConstants.MAX_LENGTH_100)
         {
-            return Result.Failure<PositionName>($"Position name cannot exceed {LengthConstants.MAX_LENGTH_100} characters.");
+            errors.Add(Error.BadRequest($"Position name cannot exceed {LengthConstants.MAX_LENGTH_100} characters."));
         }
 
         if (name.Length < LengthConstants.MIN_LENGTH_3)
         {
-            return Result.Failure<PositionName>($"Position name must be at least {LengthConstants.MIN_LENGTH_3} characters.");
+            errors.Add(Error.BadRequest($"Position name must be at least {LengthConstants.MIN_LENGTH_3} characters."));
         }
 
-        return Result.Success(new PositionName(name));
+        if (errors.Any())
+        {
+            return Result.Failure<PositionName, Failure>(errors);
+        }
+
+        return Result.Success<PositionName, Failure>(new PositionName(name));
     }
 }

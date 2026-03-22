@@ -1,6 +1,7 @@
 using System;
 using CSharpFunctionalExtensions;
 using DirectoryService.Domain.Departments;
+using Shared.Errors;
 
 namespace DirectoryService.Domain.Positions;
 
@@ -35,26 +36,9 @@ public class Position
     public DateTime? UpdatedAt { get; private set; }
 
     public IReadOnlyList<DepartmentPosition> Departments => _departments.AsReadOnly();
-
-    public static Result<Position> Create(string name, string description, bool isActive)
-    {
-        var nameResult = PositionName.Create(name);
-        if (nameResult.IsFailure)
-        {
-            return Result.Failure<Position>(nameResult.Error);
-        }
-
-        var descriptionResult = PositionDescription.Create(description);
-        if (descriptionResult.IsFailure)
-        {
-            return Result.Failure<Position>(descriptionResult.Error);
-        }
-
-        return Result.Success(new Position(nameResult.Value, descriptionResult.Value, isActive));
-    }
     
-    public static Result<Position> Create(PositionName name, PositionDescription description, bool isActive)
+    public static Result<Position, Failure> Create(PositionName name, PositionDescription description, bool isActive)
     {
-        return Result.Success(new Position(name, description, isActive));
+        return Result.Success<Position, Failure>(new Position(name, description, isActive));
     }
 }

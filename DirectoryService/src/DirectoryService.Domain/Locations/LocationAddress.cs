@@ -1,4 +1,5 @@
 using CSharpFunctionalExtensions;
+using Shared.Errors;
 
 namespace DirectoryService.Domain.Locations;
 
@@ -21,29 +22,36 @@ public record class LocationAddress
 
     public int HouseNumber { get; }
 
-    public static Result<LocationAddress> Create(string country, string city, string street, int houseNumber)
+    public static Result<LocationAddress, Failure> Create(string country, string city, string street, int houseNumber)
     {
+        var errors = new List<Error>();
+
         if (!IsValidStringPart(country))
         {
-            return Result.Failure<LocationAddress>($"Country cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters.");
+            errors.Add(Error.BadRequest($"Country cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters."));
         }
 
         if (!IsValidStringPart(city))
         {
-            return Result.Failure<LocationAddress>($"City cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters.");
+            errors.Add(Error.BadRequest($"City cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters."));
         }
 
         if (!IsValidStringPart(street))
         {
-            return Result.Failure<LocationAddress>($"Street cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters.");
+            errors.Add(Error.BadRequest($"Street cannot be empty or exceed {LengthConstants.MAX_LENGTH_50} characters."));
         }
 
         if (houseNumber <= 0)
         {
-            return Result.Failure<LocationAddress>("House number must be a positive integer.");
+            errors.Add(Error.BadRequest("House number must be a positive integer."));
         }
 
-        return Result.Success(new LocationAddress(country, city, street, houseNumber));
+        if (errors.Any())
+        {
+            return Result.Failure<LocationAddress, Failure>(errors);
+        }
+
+        return Result.Success<LocationAddress, Failure>(new LocationAddress(country, city, street, houseNumber));
     }
 
     private static bool IsValidStringPart(string part)

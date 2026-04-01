@@ -1,5 +1,6 @@
 using System;
 using System.Security.Authentication;
+using Microsoft.Extensions.Logging;
 using Shared.Errors;
 
 namespace DirectoryService.Presentation.Middlewares;
@@ -29,7 +30,11 @@ public sealed class ExceptionMiddleware
 
     private async Task HandleExceptionAsync(HttpContext context, Exception exception)
     {
-        _logger.LogError(exception, "An unhandled exception occurred.");
+        _logger.LogError(
+            exception,
+            "Неожиданное исключение: {Method} {Path}",
+            context.Request.Method,
+            context.Request.Path);
         (int statusCode, Error error) = exception switch
         {
             BadHttpRequestException badRequestException => (StatusCodes.Status400BadRequest, Error.BadRequest(badRequestException.Message)),

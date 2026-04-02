@@ -3,6 +3,7 @@ using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Contracts.Locations.Create;
 using DirectoryService.Domain.Locations;
+using Microsoft.Extensions.Logging;
 using Shared.Errors;
 
 namespace DirectoryService.Application.Implementations.Locations;
@@ -10,10 +11,12 @@ namespace DirectoryService.Application.Implementations.Locations;
 public sealed class LocationService : ILocationsService
 {
     private readonly ILocationsRepository _locationsRepository;
+    private readonly ILogger<LocationService> _logger;
 
-    public LocationService(ILocationsRepository locationsRepository)
+    public LocationService(ILocationsRepository locationsRepository, ILogger<LocationService> logger)
     {
         _locationsRepository = locationsRepository;
+        _logger = logger;
     }
 
     public async Task<Result<Guid, Failure>> CreateAsync(CreateLocationRequest location, CancellationToken cancellationToken)
@@ -39,6 +42,9 @@ public sealed class LocationService : ILocationsService
 
         if (errors.Any())
         {
+            _logger.LogWarning(
+                "Отклонён запрос на создание локации: ошибки валидации: {Errors}",
+                string.Join("; ", errors.Select(e => $"{e.Code}: {e.Message}")));
             return Result.Failure<Guid, Failure>(errors);
         }
 
@@ -46,9 +52,16 @@ public sealed class LocationService : ILocationsService
         var createResult = await _locationsRepository.CreateAsync(result.Value, cancellationToken);
         if (createResult.IsFailure)
         {
+            _logger.LogWarning(
+                "Создание локации не завершено: {Errors}",
+                string.Join("; ", createResult.Error.Select(e => $"{e.Code}: {e.Message}")));
             return Result.Failure<Guid, Failure>(createResult.Error);
         }
 
+        _logger.LogInformation(
+            "Создана локация: {LocationId}, часовой пояс: {TimeZone}",
+            createResult.Value,
+            location.timezone);
         return Result.Success<Guid, Failure>(createResult.Value);
     }
 }

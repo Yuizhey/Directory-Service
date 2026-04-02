@@ -1,40 +1,43 @@
 using System;
 using CSharpFunctionalExtensions;
+using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Contracts.Locations.Create;
 using DirectoryService.Domain.Locations;
 using Microsoft.Extensions.Logging;
 using Shared.Errors;
 
-namespace DirectoryService.Application.Implementations.Locations;
+namespace DirectoryService.Application.Implementations.Locations.CreateLocationCommand;
 
-public sealed class LocationService : ILocationsService
+public sealed record CreateLocationCommand(CreateLocationRequest location) : ICommand;
+
+public sealed class CreateLocationHandler : ICommandHandler<Guid, CreateLocationCommand>
 {
     private readonly ILocationsRepository _locationsRepository;
-    private readonly ILogger<LocationService> _logger;
+    private readonly ILogger<CreateLocationHandler> _logger;
 
-    public LocationService(ILocationsRepository locationsRepository, ILogger<LocationService> logger)
+    public CreateLocationHandler(ILocationsRepository locationsRepository, ILogger<CreateLocationHandler> logger)
     {
         _locationsRepository = locationsRepository;
         _logger = logger;
     }
 
-    public async Task<Result<Guid, Failure>> CreateAsync(CreateLocationRequest location, CancellationToken cancellationToken)
+    public async Task<Result<Guid, Failure>> Handle(CreateLocationCommand command, CancellationToken cancellationToken)
     {
-        var locationAddress = LocationAddress.Create(location.address.country, location.address.city, location.address.street, location.address.houseNumber);
+        var locationAddress = LocationAddress.Create(command.location.address.country, command.location.address.city, command.location.address.street, command.location.address.houseNumber);
         var errors = new List<Error>();
         if (locationAddress.IsFailure)
         {
             errors.AddRange(locationAddress.Error.Errors);
         }
 
-        var locationTimezone = LocationTimeZone.Create(location.timezone);
+        var locationTimezone = LocationTimeZone.Create(command.location.timezone);
         if (locationTimezone.IsFailure)
         {
             errors.AddRange(locationTimezone.Error.Errors);
         }
 
-        var locationName = LocationName.Create(location.name);
+        var locationName = LocationName.Create(command.location.name);
         if (locationName.IsFailure)
         {
             errors.AddRange(locationName.Error.Errors);
@@ -61,7 +64,7 @@ public sealed class LocationService : ILocationsService
         _logger.LogInformation(
             "Создана локация: {LocationId}, часовой пояс: {TimeZone}",
             createResult.Value,
-            location.timezone);
+            command.location.timezone);
         return Result.Success<Guid, Failure>(createResult.Value);
     }
 }

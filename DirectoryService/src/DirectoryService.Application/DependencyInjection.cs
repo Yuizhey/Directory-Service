@@ -1,4 +1,6 @@
 using System;
+using System.Windows.Input;
+using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Application.Implementations.Locations;
 using Microsoft.Extensions.Configuration;
@@ -12,9 +14,13 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<ILocationsService, LocationService>();
         services.AddSerilogLogger(configuration);
-        
+
+        var assembly = typeof(DependencyInjection).Assembly;
+        services.Scan(scan => scan.FromAssemblies(assembly)
+            .AddClasses(c => c.AssignableToAny(typeof(ICommandHandler<,>), typeof(ICommandHandler<>)))
+            .AsSelfWithInterfaces()
+            .WithScopedLifetime());
         return services;
     }
 

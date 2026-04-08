@@ -3,6 +3,7 @@ using System.Windows.Input;
 using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Application.Implementations.Locations;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -21,6 +22,8 @@ public static class DependencyInjection
             .AddClasses(c => c.AssignableToAny(typeof(ICommandHandler<,>), typeof(ICommandHandler<>)))
             .AsSelfWithInterfaces()
             .WithScopedLifetime());
+
+        services.AddValidatorsFromAssembly(assembly);
         return services;
     }
 

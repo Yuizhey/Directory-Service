@@ -1,3 +1,4 @@
+using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Application.Implementations.Locations.CreateLocationCommand;
 using DirectoryService.Contracts.Locations.Create;
@@ -19,7 +20,7 @@ public sealed class LocationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<EndPointResult<Guid>> Create([FromServices] CreateLocationHandler handler, [FromBody] CreateLocationRequest request, CancellationToken cancellationToken)
+    public async Task<EndPointResult<Guid>> Create([FromServices] ICommandHandler<Guid, CreateLocationCommand> handler, [FromBody] CreateLocationRequest request, CancellationToken cancellationToken)
     {
         var command = new CreateLocationCommand(request);
         

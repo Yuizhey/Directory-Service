@@ -3,6 +3,7 @@ using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Domain.Locations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Npgsql;
 using Shared.Errors;
 
 namespace DirectoryService.Infrastructure.Repositories;
@@ -26,8 +27,37 @@ public class LocationsRepository : ILocationsRepository
             await _dbContext.SaveChangesAsync(cancellationToken);
             return Result.Success<Guid, Failure>(location.Id);
         }
+        catch (DbUpdateException ex) when (ex.InnerException is PostgresException pgEx && pgEx.SqlState == PostgresErrorCodes.UniqueViolation)
+        {
+            _logger.LogError(
+                ex,
+                "Ошибка при сохранении локации в БД (LocationId={LocationId})",
+                location.Id);
+            return Result.Failure<Guid, Failure>(Error.Conflict("An error occurred while saving the location to the database"));
+        }
         catch (DbUpdateException ex)
         {
+            if(ex.InnerException is PostgresException pgEx && pgEx.SqlState == PostgresErrorCodes.UniqueViolation)
+            {
+                if(pgEx.ConstraintName == "ix_locations_name")
+                {
+                    _logger.LogWarning(
+                        "Попытка создать локацию с уже существующим именем (LocationId={LocationId}, LocationName={LocationName})",
+                        location.Id, 
+                        location.Name.Value);
+                    return Result.Failure<Guid, Failure>(Error.Conflict("A location with the same name already exists"));
+                }
+
+                if(pgEx.ConstraintName == "ix_locations_address")
+                {
+                    _logger.LogWarning(
+                        "Попытка создать локацию с уже существующим адресом (LocationId={LocationId}, LocationAddress={LocationAddress})",
+                        location.Id, 
+                        $"{location.Address.Country}, {location.Address.City}, {location.Address.Street}, {location.Address.HouseNumber}");
+                    return Result.Failure<Guid, Failure>(Error.Conflict("A location with the same address already exists"));
+                }
+            }
+
             _logger.LogError(
                 ex,
                 "Ошибка при сохранении локации в БД (LocationId={LocationId})",

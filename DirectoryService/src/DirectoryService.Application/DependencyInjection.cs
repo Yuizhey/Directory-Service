@@ -1,6 +1,9 @@
 using System;
+using System.Windows.Input;
+using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Abstractions.Locations;
 using DirectoryService.Application.Implementations.Locations;
+using FluentValidation;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -12,9 +15,15 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddApplicationLayer(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<ILocationsService, LocationService>();
         services.AddSerilogLogger(configuration);
-        
+
+        var assembly = typeof(DependencyInjection).Assembly;
+        services.Scan(scan => scan.FromAssemblies(assembly)
+            .AddClasses(c => c.AssignableToAny(typeof(ICommandHandler<,>), typeof(ICommandHandler<>)))
+            .AsSelfWithInterfaces()
+            .WithScopedLifetime());
+
+        services.AddValidatorsFromAssembly(assembly);
         return services;
     }
 

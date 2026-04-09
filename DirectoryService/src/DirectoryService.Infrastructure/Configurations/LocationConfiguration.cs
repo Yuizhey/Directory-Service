@@ -15,17 +15,34 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
         builder.HasKey(l => l.Id);
         builder.Property(l => l.Id).HasColumnName("id");
 
-        builder.ComplexProperty(v => v.Name, n =>
+        builder.OwnsOne(l => l.Name, n =>
         {
-            n.Property(p => p.Value).HasColumnName("name").HasMaxLength(LengthConstants.MAX_LENGTH_120).IsRequired();
+            n.Property(p => p.Value)
+            .HasColumnName("name")
+            .HasMaxLength(LengthConstants.MAX_LENGTH_120)
+            .IsRequired();
+
+            n.HasIndex(p => p.Value)
+            .IsUnique()
+            .HasDatabaseName("ix_locations_name");
         });
 
-        builder.ComplexProperty(v => v.Address, a =>
+        builder.OwnsOne(l => l.Address, a =>
         {
-            a.Property(p => p.Country).HasColumnName("country").HasMaxLength(LengthConstants.MAX_LENGTH_50).IsRequired();
-            a.Property(p => p.City).HasColumnName("city").HasMaxLength(LengthConstants.MAX_LENGTH_50).IsRequired();
-            a.Property(p => p.Street).HasColumnName("street").HasMaxLength(LengthConstants.MAX_LENGTH_50).IsRequired();
+            a.Property(p => p.Country).HasColumnName("country").IsRequired();
+            a.Property(p => p.City).HasColumnName("city").IsRequired();
+            a.Property(p => p.Street).HasColumnName("street").IsRequired();
             a.Property(p => p.HouseNumber).HasColumnName("house_number").IsRequired();
+
+            a.HasIndex(p => new
+            {
+                p.Country,
+                p.City,
+                p.Street,
+                p.HouseNumber
+            })
+            .IsUnique()
+            .HasDatabaseName("ux_locations_address");
         });
 
         builder.ComplexProperty(v => v.TimeZone, n =>

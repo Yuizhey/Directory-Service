@@ -39,7 +39,7 @@ public class LocationConfiguration : IEntityTypeConfiguration<Location>
                 p.Country,
                 p.City,
                 p.Street,
-                p.HouseNumber
+                p.HouseNumber,
             })
             .IsUnique()
             .HasDatabaseName("ux_locations_address");

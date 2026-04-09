@@ -1,4 +1,7 @@
 using System;
+using DirectoryService.Application.Abstractions.Command;
+using DirectoryService.Application.Implementations.Positions.CreatePositionCommand;
+using DirectoryService.Contracts.Positions.Create;
 using DirectoryService.Presentation.ResponseResult;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,8 +19,18 @@ public sealed class PositionsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<EndPointResult<Guid>> Create(CancellationToken cancellationToken)
+    public async Task<EndPointResult<Guid>> Create([FromServices]ICommandHandler<Guid, CreatePositionCommand> handler, [FromBody]CreatePositionRequest request, CancellationToken cancellationToken)
     {
+        var command = new CreatePositionCommand(request);
 
+        var result = await handler.Handle(command, cancellationToken);
+        if (result.IsFailure)
+        {
+            _logger.LogWarning(
+                "POST api/positions завершился с ошибкой: TraceId={TraceId}",
+                HttpContext.TraceIdentifier);
+        }
+
+        return result;
     }
 }

@@ -8,4 +8,6 @@ namespace DirectoryService.Application.Abstractions.Locations;
 public interface ILocationsRepository
 {
     Task<Result<Guid, Failure>> CreateAsync(Location location, CancellationToken cancellationToken);
+    
+    Task<Result<List<Location>, Failure>> GetByIdsAsync(IEnumerable<Guid> id, CancellationToken cancellationToken);
 }

@@ -14,13 +14,14 @@ public class Position
     /// </summary>
     private Position() { }
     
-    private Position(PositionName name, PositionDescription description, bool isActive)
+    private Position(PositionName name, PositionDescription description, bool isActive, IEnumerable<Guid> departmentIds)
     {
         Id = Guid.NewGuid();
         Name = name;
         Description = description;
         IsActive = isActive;
         CreatedAt = DateTime.UtcNow;
+        _departments = departmentIds.Select(departmentId => new DepartmentPosition(departmentId, this.Id)).ToList();
     }
 
     public Guid Id { get; private set; }
@@ -37,8 +38,8 @@ public class Position
 
     public IReadOnlyList<DepartmentPosition> Departments => _departments.AsReadOnly();
     
-    public static Result<Position, Failure> Create(PositionName name, PositionDescription description, bool isActive)
+    public static Result<Position, Failure> Create(PositionName name, PositionDescription description, bool isActive, IEnumerable<Guid> departmentIds)
     {
-        return Result.Success<Position, Failure>(new Position(name, description, isActive));
+        return Result.Success<Position, Failure>(new Position(name, description, isActive, departmentIds));
     }
 }

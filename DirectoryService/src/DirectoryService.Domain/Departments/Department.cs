@@ -1,6 +1,7 @@
 using System;
 using System.ComponentModel;
 using CSharpFunctionalExtensions;
+using Shared.Errors;
 
 namespace DirectoryService.Domain.Departments;
 
@@ -21,7 +22,8 @@ public class Department
         DepartmentPath path,
         short depth,
         bool isActive,
-        IEnumerable<Guid> locationIds)
+        IEnumerable<Guid> locationIds,
+        Department? parent = null)
     {
         Id = Guid.NewGuid();
         Name = name;
@@ -31,6 +33,7 @@ public class Department
         IsActive = isActive;
         CreatedAt = DateTime.UtcNow;
         _locations = locationIds.Select(locationId => new DepartmentLocation(this.Id, locationId)).ToList();
+        Parent = parent;
     }
 
     public Guid Id { get; private set; }
@@ -57,8 +60,8 @@ public class Department
 
     public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
     
-    public static Result<Department> Create(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive, IEnumerable<Guid> locationIds)
+    public static Result<Department> Create(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive, IEnumerable<Guid> locationIds, Department? parent = null)
     { 
-        return Result.Success(new Department(name, identifier, path, depth, isActive, locationIds));
+        return Result.Success(new Department(name, identifier, path, depth, isActive, locationIds, parent));
     }
 }

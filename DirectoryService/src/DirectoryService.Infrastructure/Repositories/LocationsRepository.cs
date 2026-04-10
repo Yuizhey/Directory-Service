@@ -57,4 +57,21 @@ public class LocationsRepository : ILocationsRepository
             return Result.Failure<Guid, Failure>(Error.Conflict("An error occurred while saving the location to the database"));
         }
     }
+
+    public async Task<Result<List<Location>, Failure>> GetByIdsAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var locations = await _dbContext.Locations.Where(l => ids.Contains(l.Id)).ToListAsync(cancellationToken);
+            return Result.Success<List<Location>, Failure>(locations);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Ошибка при получении локаций по идентификаторам (LocationIds={LocationIds})",
+                string.Join(", ", ids));
+            return Result.Failure<List<Location>, Failure>(Error.Conflict("An error occurred while retrieving locations from the database"));
+        }
+    }
 }

@@ -20,7 +20,10 @@ public sealed class LocationsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<EndPointResult<Guid>> Create([FromServices] ICommandHandler<Guid, CreateLocationCommand> handler, [FromBody] CreateLocationRequest request, CancellationToken cancellationToken)
+    public async Task<EndPointResult<Guid>> Create(
+        [FromServices] ICommandHandler<Guid, CreateLocationCommand> handler,
+        [FromBody] CreateLocationRequest request,
+        CancellationToken cancellationToken)
     {
         var command = new CreateLocationCommand(request);
         

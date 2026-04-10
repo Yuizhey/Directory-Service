@@ -15,12 +15,17 @@ public class PositionConfiguration : IEntityTypeConfiguration<Position>
         builder.HasKey(p => p.Id);
         builder.Property(p => p.Id).HasColumnName("id");
 
-        builder.ComplexProperty(p => p.Name, n =>
+        builder.OwnsOne(p => p.Name, n =>
         {
             n.Property(p => p.Value)
                 .HasColumnName("name")
                 .HasMaxLength(LengthConstants.MAX_LENGTH_100)
                 .IsRequired();
+
+            n.HasIndex(p => p.Value)
+                .IsUnique()
+                .HasFilter("is_active = true")
+                .HasDatabaseName("ix_active_positions_name");
         });
 
         builder.ComplexProperty(p => p.Description, n =>

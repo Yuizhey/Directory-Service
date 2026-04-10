@@ -28,12 +28,17 @@ public static class CustomValidators
             context.AddFailure(failure);
         });
     }
-    
+
     public static IRuleBuilderOptions<T, TProperty> WithError<T, TProperty>(
         this IRuleBuilderOptions<T, TProperty> ruleBuilder, Failure error)
     {
         return ruleBuilder
             .WithMessage("Validation failed")
             .WithState(_ => error);
+    }
+    
+    public static List<Error> ToErrorList(this IList<ValidationFailure> validationFailures)
+    {
+        return validationFailures.Select(e => e.CustomState as Failure).SelectMany(f => f!.Errors).ToList();
     }
 }

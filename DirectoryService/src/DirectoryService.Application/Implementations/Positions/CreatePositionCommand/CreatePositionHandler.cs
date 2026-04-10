@@ -57,7 +57,7 @@ public sealed class CreatePositionHandler : ICommandHandler<Guid, CreatePosition
         var validationResult = await _validator.ValidateAsync(command, cancellationToken);
         if (!validationResult.IsValid)
         {
-            var validationResultErrors = validationResult.Errors.Select(e => e.CustomState as Failure).SelectMany(f => f!.Errors).ToList();
+            var validationResultErrors = validationResult.Errors.ToErrorList();
             return Result.Failure<Guid, Failure>(validationResultErrors);
         }
 

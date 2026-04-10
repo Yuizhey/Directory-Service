@@ -19,7 +19,10 @@ public sealed class DepartmentsController : ControllerBase
     }
         
     [HttpPost]
-    public async Task<EndPointResult<Guid>> Create([FromServices]ICommandHandler<Guid, CreateDepartmentCommand> handler, [FromBody]CreateDepartmentRequest request, CancellationToken cancellationToken)
+    public async Task<EndPointResult<Guid>> Create(
+        [FromServices] ICommandHandler<Guid, CreateDepartmentCommand> handler,
+        [FromBody] CreateDepartmentRequest request,
+        CancellationToken cancellationToken)
     {
         var command = new CreateDepartmentCommand(request);
         

@@ -19,7 +19,10 @@ public sealed class PositionsController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<EndPointResult<Guid>> Create([FromServices]ICommandHandler<Guid, CreatePositionCommand> handler, [FromBody]CreatePositionRequest request, CancellationToken cancellationToken)
+    public async Task<EndPointResult<Guid>> Create(
+        [FromServices] ICommandHandler<Guid, CreatePositionCommand> handler,
+        [FromBody] CreatePositionRequest request,
+        CancellationToken cancellationToken)
     {
         var command = new CreatePositionCommand(request);
 

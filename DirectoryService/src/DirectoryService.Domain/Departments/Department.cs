@@ -59,9 +59,16 @@ public class Department
     public IReadOnlyList<DepartmentLocation> Locations => _locations.AsReadOnly();
 
     public IReadOnlyList<DepartmentPosition> Positions => _positions.AsReadOnly();
-    
+
     public static Result<Department> Create(DepartmentName name, DepartmentIdentifier identifier, DepartmentPath path, short depth, bool isActive, IEnumerable<Guid> locationIds, Department? parent = null)
-    { 
+    {
         return Result.Success(new Department(name, identifier, path, depth, isActive, locationIds, parent));
+    }
+    
+    public UnitResult<Failure> UpdateLocations(IEnumerable<Guid> locationIds)
+    {
+        _locations = locationIds.Select(locationId => new DepartmentLocation(this.Id, locationId)).ToList();
+        UpdatedAt = DateTime.UtcNow;
+        return UnitResult.Success<Failure>();
     }
 }

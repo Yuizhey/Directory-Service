@@ -38,6 +38,7 @@ public sealed class FailureResult : IResult
                 ErrorType.NOT_FOUND => StatusCodes.Status404NotFound,
                 ErrorType.CONFLICT => StatusCodes.Status409Conflict,
                 ErrorType.INTERNAL_SERVER_ERROR => StatusCodes.Status500InternalServerError,
+                ErrorType.SERVICE_UNAVAILABLE => StatusCodes.Status503ServiceUnavailable,
                 _ => StatusCodes.Status500InternalServerError
             };
     }

@@ -56,6 +56,7 @@ public sealed class DepartmentsController : ControllerBase
             _logger.LogWarning(
                 "POST api/departments завершился с ошибкой: TraceId={TraceId}",
                 HttpContext.TraceIdentifier);
+            return Result.Failure<Guid, Failure>(result.Error);
         }
         
         return Result.Success<Guid, Failure>(id);

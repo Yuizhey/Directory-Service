@@ -21,4 +21,9 @@ public enum ErrorType
     /// The server encountered an unexpected condition that prevented it from fulfilling the request.
     /// </summary>
     INTERNAL_SERVER_ERROR,
+    
+    /// <summary>
+    /// The server is currently unable to handle the request due to a temporary overload or scheduled maintenance, which will likely be resolved after some delay.
+    /// </summary>
+    SERVICE_UNAVAILABLE,
 }

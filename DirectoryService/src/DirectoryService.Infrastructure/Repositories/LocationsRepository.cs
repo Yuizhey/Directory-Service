@@ -40,7 +40,7 @@ public class LocationsRepository : ILocationsRepository
                     return Result.Failure<Guid, Failure>(Error.Conflict("A location with the same name already exists"));
                 }
 
-                if(pgEx.ConstraintName == "ix_locations_address")
+                if(pgEx.ConstraintName == "ux_locations_address")
                 {
                     _logger.LogWarning(
                         "Попытка создать локацию с уже существующим адресом (LocationId={LocationId}, LocationAddress={LocationAddress})",

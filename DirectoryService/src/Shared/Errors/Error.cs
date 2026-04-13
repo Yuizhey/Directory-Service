@@ -17,4 +17,5 @@ public record class Error
     public static Error NotFound(string message, string code = "NOT_FOUND") => new(code, message, ErrorType.NOT_FOUND);
     public static Error Conflict(string message, string code = "CONFLICT") => new(code, message, ErrorType.CONFLICT);
     public static Error InternalServerError(string message, string code = "INTERNAL_SERVER_ERROR") => new(code, message, ErrorType.INTERNAL_SERVER_ERROR);
+    public static Error ServiceUnavailable(string message, string code = "SERVICE_UNAVAILABLE") => new(code, message, ErrorType.SERVICE_UNAVAILABLE);
 }

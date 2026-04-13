@@ -1,9 +1,13 @@
 using System;
+using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Implementations.Departments.CreateDepartmentCommand;
+using DirectoryService.Application.Implementations.Departments.UpdateDepartmentLocationsCommand;
 using DirectoryService.Contracts.Departments.Create;
+using DirectoryService.Contracts.Departments.Update;
 using DirectoryService.Presentation.ResponseResult;
 using Microsoft.AspNetCore.Mvc;
+using Shared.Errors;
 
 namespace DirectoryService.Presentation.Controllers;
 
@@ -17,7 +21,7 @@ public sealed class DepartmentsController : ControllerBase
     {
         _logger = logger;
     }
-        
+
     [HttpPost]
     public async Task<EndPointResult<Guid>> Create(
         [FromServices] ICommandHandler<Guid, CreateDepartmentCommand> handler,
@@ -25,7 +29,7 @@ public sealed class DepartmentsController : ControllerBase
         CancellationToken cancellationToken)
     {
         var command = new CreateDepartmentCommand(request);
-        
+
         var result = await handler.Handle(command, cancellationToken);
         if (result.IsFailure)
         {
@@ -33,7 +37,28 @@ public sealed class DepartmentsController : ControllerBase
                 "POST api/departments завершился с ошибкой: TraceId={TraceId}",
                 HttpContext.TraceIdentifier);
         }
-        
+
         return result;
+    }
+    
+    [HttpPatch("{id:guid}/locations")]
+    public async Task<EndPointResult<Guid>> Update(
+        [FromRoute] Guid id,
+        [FromServices] ICommandHandler<UpdateDepartmentLocationsCommand> handler,
+        [FromBody] UpdateDepartmentLocationsRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateDepartmentLocationsCommand(id, request);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if (result.IsFailure)
+        {
+            _logger.LogWarning(
+                "POST api/departments завершился с ошибкой: TraceId={TraceId}",
+                HttpContext.TraceIdentifier);
+            return Result.Failure<Guid, Failure>(result.Error);
+        }
+        
+        return Result.Success<Guid, Failure>(id);
     }
 }

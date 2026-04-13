@@ -49,25 +49,42 @@ public class DepartmentsRepository : IDepartmentsRepository
         }
     }
 
-    public Task<Result<Department, Failure>> GetById(Guid ids, CancellationToken cancellationToken)
+    public async Task<UnitResult<Failure>> DeleteAllLocationsByDepartmentId(Guid departmentId, CancellationToken cancellationToken)
     {
-        try        
+        try
         {
-            var department = _dbContext.Departments.FirstOrDefault(d => d.Id == ids);
+            await _dbContext.DepartmentLocations.Where(l => l.DepartmentId == departmentId).ExecuteDeleteAsync(cancellationToken);
+            return UnitResult.Success<Failure>();
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Ошибка при удалении всех локаций для отдела (DepartmentId={DepartmentId})",
+                departmentId);
+            return UnitResult.Failure<Failure>(Error.Conflict("An error occurred while deleting the department's locations from the database"));
+        }
+    }
+
+    public async Task<Result<Department, Failure>> GetById(Guid id, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var department = await _dbContext.Departments.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
             if (department == null)
             {
-                return Task.FromResult(Result.Failure<Department, Failure>(Error.NotFound("Department not found")));
+                return Result.Failure<Department, Failure>(Error.NotFound("Department not found"));
             }
-            
-            return Task.FromResult(Result.Success<Department, Failure>(department));
+
+            return Result.Success<Department, Failure>(department);
         }
         catch (Exception ex)
         {
             _logger.LogError(
                 ex,
                 "Ошибка при получении отдела по идентификатору (DepartmentId={DepartmentId})",
-                ids);
-            return Task.FromResult(Result.Failure<Department, Failure>(Error.Conflict("An error occurred while retrieving the department from the database")));
+                id);
+            return Result.Failure<Department, Failure>(Error.Conflict("An error occurred while retrieving the department from the database"));
         }
     }
 

@@ -22,6 +22,10 @@ public sealed class DirectoryServiceDbContext : DbContext
     
     public DbSet<Position> Positions => Set<Position>();
 
+    public DbSet<DepartmentLocation> DepartmentLocations => Set<DepartmentLocation>();
+
+    public DbSet<DepartmentPosition> DepartmentPositions => Set<DepartmentPosition>();
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         optionsBuilder.UseNpgsql(_connectionString);

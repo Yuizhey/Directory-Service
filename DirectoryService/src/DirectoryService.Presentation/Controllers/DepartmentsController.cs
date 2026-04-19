@@ -3,6 +3,7 @@ using CSharpFunctionalExtensions;
 using DirectoryService.Application.Abstractions.Command;
 using DirectoryService.Application.Implementations.Departments.CreateDepartmentCommand;
 using DirectoryService.Application.Implementations.Departments.UpdateDepartmentLocationsCommand;
+using DirectoryService.Application.Implementations.Departments.UpdateDepartmentsStructureCommand;
 using DirectoryService.Contracts.Departments.Create;
 using DirectoryService.Contracts.Departments.Update;
 using DirectoryService.Presentation.ResponseResult;
@@ -54,11 +55,34 @@ public sealed class DepartmentsController : ControllerBase
         if (result.IsFailure)
         {
             _logger.LogWarning(
-                "POST api/departments завершился с ошибкой: TraceId={TraceId}",
+                "PATCH api/departments/{id:guid}/locations завершился с ошибкой: TraceId={TraceId}",
+                id,
                 HttpContext.TraceIdentifier);
             return Result.Failure<Guid, Failure>(result.Error);
         }
         
         return Result.Success<Guid, Failure>(id);
+    }
+
+    [HttpPatch("{departmentId}/parent")]
+    public async Task<EndPointResult<Guid>> UpdateStructure(
+        [FromRoute] Guid departmentId,
+        [FromServices] ICommandHandler<UpdateDepartmentsStructureCommand> handler,
+        [FromBody] UpdateDepartmentsStructureRequest request,
+        CancellationToken cancellationToken)
+    {
+        var command = new UpdateDepartmentsStructureCommand(departmentId, request);
+        
+        var result = await handler.Handle(command, cancellationToken);
+        if (result.IsFailure)
+        {
+            _logger.LogWarning(
+                "PATCH /api/departments/{departmentId}/parent завершился с ошибкой: TraceId={TraceId}",
+                departmentId,
+                HttpContext.TraceIdentifier);
+            return Result.Failure<Guid, Failure>(result.Error);
+        }
+        
+        return Result.Success<Guid, Failure>(departmentId);
     }
 }

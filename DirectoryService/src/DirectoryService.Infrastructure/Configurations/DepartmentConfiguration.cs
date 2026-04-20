@@ -29,7 +29,7 @@ public class DepartmentConfiguration : IEntityTypeConfiguration<Department>
                 .HasDatabaseName("ix_departments_identifier");
         });
 
-        builder.ComplexProperty(d => d.Path, p => p.Property(p => p.Value).HasColumnName("path").HasMaxLength(LengthConstants.MAX_LENGTH_50).IsRequired());
+        builder.ComplexProperty(d => d.Path, p => p.Property(p => p.Value).HasColumnName("path").HasColumnType("ltree").HasMaxLength(LengthConstants.MAX_LENGTH_50).IsRequired());
 
         builder.Property(d => d.Depth).HasColumnName("depth").IsRequired();
 

@@ -105,4 +105,30 @@ public class DepartmentsRepository : IDepartmentsRepository
             return Result.Failure<List<Department>, Failure>(Error.Conflict("An error occurred while retrieving the departments from the database"));
         }
     }
+
+    public async Task<Result<List<Department>, Failure>> GetStructureByRootPath(string rootPath, CancellationToken cancellationToken)
+    {
+        try
+        {
+            var rootParam = new NpgsqlParameter("root", rootPath);
+            var items = await _dbContext.Departments
+                .FromSqlRaw(
+                @"
+                    SELECT id, name, path
+                    FROM departments
+                    WHERE path <@ @root::ltree
+                    ORDER BY path
+                ", rootParam)
+                .ToListAsync(cancellationToken);
+            return Result.Success<List<Department>, Failure>(items);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(
+                ex,
+                "Ошибка при получении структуры отделов по корневому пути (RootPath={RootPath})",
+                rootPath);
+            return Result.Failure<List<Department>, Failure>(Error.Conflict("An error occurred while retrieving the department structure from the database"));
+        }
+    }
 }

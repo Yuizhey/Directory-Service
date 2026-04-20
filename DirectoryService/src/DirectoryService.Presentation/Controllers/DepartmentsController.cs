@@ -64,7 +64,7 @@ public sealed class DepartmentsController : ControllerBase
         return Result.Success<Guid, Failure>(id);
     }
 
-    [HttpPatch("{departmentId}/parent")]
+    [HttpPatch("{departmentId:guid}/parent")]
     public async Task<EndPointResult<Guid>> UpdateStructure(
         [FromRoute] Guid departmentId,
         [FromServices] ICommandHandler<UpdateDepartmentsStructureCommand> handler,
